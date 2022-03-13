@@ -13,7 +13,8 @@ OsgiKeys.importPackage := Seq("*;resolution:=optional")
 OsgiKeys.privatePackage := Seq("!scala.*,*")
 OsgiKeys.requireCapability := """osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))""""
 
-//libraryDependencies ++= Seq(
-//  "org.apache.commons" % "commons-math3" % "3.6.1",
-//  "com.github.tototoshi" %% "scala-csv" % "1.3.6"
-//)
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+libraryDependencies ++= Seq(
+  "org.apache.commons" % "commons-math3" % "3.6.1"
+)
