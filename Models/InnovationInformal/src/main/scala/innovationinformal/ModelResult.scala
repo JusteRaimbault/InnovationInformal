@@ -13,7 +13,7 @@ package innovationinformal
 case class ModelResult(
                       states: Seq[ModelState]
                       ){
-
+  
   def fitnesses: Array[Array[Double]] = states.map(_.firms.map(_.currentFitness).toArray).toArray
 
   def bestFitnesses: Array[Double] = states.map(_.firms.map(_.currentFitness).max).toArray
