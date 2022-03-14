@@ -77,6 +77,41 @@ for(crossOverProba in unique(res$crossOverProba)){
 }
 
 
+#############
+#### optimisation results
+
+resprefix = '20220314_095225_OPTIMISATION';finalgen='10000'
+resdir = paste0(Sys.getenv('CS_HOME'),'/QuantitativeEpistemology/InnovationInformal/Results/',resprefix,'/');dir.create(resdir)
+
+res <- read_csv(file=paste0('optimisation/',resprefix,'/population',finalgen,'.csv'))
+
+res = res[res$`evolution$samples`>=5,]
+
+res$diversity = res$diversity...12
+res$averageFitness = res$averageFitness...11
+res$firmSizeScaling = res$firmSizeScaling...3
+res$crossOverShare = res$crossOverShare...5
+res$mutationProba = res$mutationProba...6
+res$mutationAmplitude = res$mutationAmplitude...7
+res$currentProductShare = res$currentProductShare...8
+res$interactionProba = res$interactionProba...9
+res$distanceDecay = res$distanceDecay...10
+
+res$samples = res$`evolution$samples`
+
+
+res = res[res$diversity< -0.15,]
+
+for(param in params){
+  g=ggplot(res,aes_string(x="diversity",y="averageFitness",color=param,size="samples"))
+  g+geom_point(alpha=0.6)+xlab("Diversity")+ylab("Utility")+scale_size_continuous(name="Samples")+stdtheme
+  ggsave(filename = paste0(resdir,"paretoDiversity-Fitness_color",param,'.png'),width=20,height=18,units='cm')
+}
+
+
+
+
+
 
 
 

@@ -1,3 +1,3 @@
 [submodule "Docs/Papers/InnovationInformal-paper"]
-	path = Docs/Papers/InnovationInformal-paper
+	path = Docs/Papers/InnovationInformal/InnovationInformal-paper
 	url = git@github.com:JusteRaimbault/InnovationInformal-paper.git
