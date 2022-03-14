@@ -1,0 +1,95 @@
+val firmsNumber = Val[Int]
+val largestFirmSize = Val[Int]
+val firmSizeScaling = Val[Double]
+val genomeSize = Val[Int]
+val timeSteps = Val[Int]
+val crossOverProba = Val[Double]
+val crossOverShare = Val[Double]
+val mutationProba = Val[Double]
+val mutationAmplitude = Val[Double]
+val currentProductShare = Val[Double]
+val interactionProba = Val[Double]
+val distanceDecay = Val[Double]
+val replication = Val[Double]
+
+val bestFitness = Val[Double]
+val averageFitness = Val[Double]
+val fitnessDiff = Val[Double]
+val fitnessEntropy = Val[Double]
+val diversity = Val[Double]
+val interactionIntensity = Val[Double]
+
+val model = ScalaTask("""
+  |import scala.util.Random
+  |import innovationinformal._
+  |
+  |implicit val rng: Random = new Random(input.replication.toInt)
+  |
+  |val genomeSize = 10
+  |
+  |val model = InnovationInformal(
+  |  firmsNumber = input.firmsNumber,
+  |  largestFirmSize = input.largestFirmSize,
+  |  firmSizeScaling = input.firmSizeScaling,
+  |  genomeSize = input.genomeSize,
+  |  timeSteps = input.timeSteps,
+  |  crossOverProba = input.crossOverProba,
+  |  crossOverShare = input.crossOverShare,
+  |  mutationProba = input.mutationProba,
+  |  mutationAmplitude = input.mutationAmplitude,
+  |  currentProductShare = input.currentProductShare,
+  |  interactionProba = input.interactionProba, 
+  |  distanceDecay = input.distanceDecay,
+  |  InnovationInformal.randomGeneralizedRastrigin(input.genomeSize)
+  |)
+  |val res: ModelResult = InnovationInformal.run(model)
+  |
+  |val bestFitness = res.bestFitnesses.last
+  |val averageFitness = res.fitnesses.last.sum / res.fitnesses.last.size.toDouble
+  |val fitnessDiff = res.fitnessDifferences.last
+  |val fitnessEntropy = res.fitnessEntropies.last
+  |val diversity = res.productDiversities.last
+  |val interactionIntensity = res.interactionIntensity
+  """.stripMargin
+    ) set (
+  plugins += pluginsOf[innovationinformal.ModelState],
+  (inputs, outputs) += (firmsNumber, largestFirmSize, firmSizeScaling, genomeSize, timeSteps, crossOverProba,
+                        crossOverShare,mutationProba,mutationAmplitude,currentProductShare,interactionProba,
+                        distanceDecay, replication),
+  outputs += (bestFitness, averageFitness, fitnessDiff, fitnessEntropy,diversity,interactionIntensity),
+  firmsNumber := 10, largestFirmSize := 100, genomeSize := 10, timeSteps := 100
+)
+
+val purpose = "OPTIMISATION"
+
+val resfilename = ((new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()))+"_"+purpose
+val indics_hook = CSVHook(workDirectory / "exploration" / (resfilename+".csv"),arrayOnRow=true)
+
+
+val env = LocalEnvironment(10)
+//val env = EGIEnvironment("vo.complex-systems.eu")
+
+NSGA2Evolution(
+    genome =
+      Seq(
+        firmSizeScaling in (0.1,2.0),
+        crossOverProba in (0.0,1.0),
+        crossOverShare in (0.0,1.0),
+        mutationProba in (0.0,1.0),
+        mutationAmplitude in (0.0,5.0),
+        currentProductShare in (0.0,1.0),
+        interactionProba in (0.0,0.0001),
+        distanceDecay in (0.1,100.0)
+      ),
+      populationSize = 200,
+      objective = Seq(informalityError,unemploymentError),
+      evaluation = (model on env),
+      stochastic = Stochastic(seed = replication),
+      termination = 10000,
+      parallelism = 10
+) hook (workDirectory / "calibration" / resdir,100) on env
+
+
+
+
+
