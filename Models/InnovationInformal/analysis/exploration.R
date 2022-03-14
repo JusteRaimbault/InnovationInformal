@@ -36,20 +36,47 @@ reldistance <- function(indic,sdindic){
 }
 
 summary(reldistance("meanbestFitness","sdbestFitness"))
-summary(reldistance("medianbestFitness","sdbestFitness"))
+#summary(reldistance("medianbestFitness","sdbestFitness"))
 
 summary(reldistance("meanaverageFitness","sdaverageFitness"))
-summary(reldistance("medianaverageFitness","sdaverageFitness"))
+#summary(reldistance("medianaverageFitness","sdaverageFitness"))
 
 summary(reldistance("meanfitnessDiff","sdfitnessDiff"))
-summary(reldistance("medianfitnessDiff","sdfitnessDiff"))
+#summary(reldistance("medianfitnessDiff","sdfitnessDiff"))
 
 summary(reldistance("meanfitnessEntropy","sdfitnessEntropy"))
-summary(reldistance("medianfitnessEntropy","sdfitnessEntropy"))
+#summary(reldistance("medianfitnessEntropy","sdfitnessEntropy"))
 
 summary(reldistance("meandiversity","sddiversity"))
-summary(reldistance("mediandiversity","sddiversity"))
+#summary(reldistance("mediandiversity","sddiversity"))
 
 summary(reldistance("meaninteractionIntensity","sdinteractionIntensity"))
-summary(reldistance("medianinteractionIntensity","sdinteractionIntensity"))
+#summary(reldistance("medianinteractionIntensity","sdinteractionIntensity"))
+
+
+
+#####
+## Exploration plots
+
+# as of 14/03/2022 - 11:34: miss 1800 model runs / 52800
+resprefix = '20220314_071017_EXPLORATION'
+
+resdir = paste0(Sys.getenv('CS_HOME'),'/QuantitativeEpistemology/InnovationInformal/Results/',resprefix,'/');dir.create(resdir,recursive = T)
+
+res <- read_csv(file=paste0('exploration/',resprefix,'.csv'))
+
+for(crossOverProba in unique(res$crossOverProba)){
+  for (indic in indics){
+    g = ggplot(res[res$crossOverProba==crossOverProba,],
+               aes_string(x = "distanceDecay", y=indic, color = "interactionProba", group="interactionProba" ))
+    
+    g+geom_point(pch='.')+geom_smooth()+facet_grid(crossOverShare~firmSizeScaling,scales = 'free')+stdtheme
+    ggsave(filename = paste0(resdir,indic,'-distanceDecay_color-interactionProba_facet-crossOverShare-firmSizeScaling_crossOverProba',crossOverProba,'.png'),width=30,height=20,units='cm')
+    
+  }
+}
+
+
+
+
 
