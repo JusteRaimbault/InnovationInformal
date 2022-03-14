@@ -10,7 +10,7 @@ val mutationAmplitude = Val[Double]
 val currentProductShare = Val[Double]
 val interactionProba = Val[Double]
 val distanceDecay = Val[Double]
-val replication = Val[Double]
+val replication = Val[Long]
 
 val bestFitness = Val[Double]
 val averageFitness = Val[Double]
@@ -45,10 +45,10 @@ val model = ScalaTask("""
   |val res: ModelResult = InnovationInformal.run(model)
   |
   |val bestFitness = res.bestFitnesses.last
-  |val averageFitness = res.fitnesses.last.sum / res.fitnesses.last.size.toDouble
+  |val averageFitness = (-1.0*res.fitnesses.last.sum) / res.fitnesses.last.size.toDouble
   |val fitnessDiff = res.fitnessDifferences.last
   |val fitnessEntropy = res.fitnessEntropies.last
-  |val diversity = res.productDiversities.last
+  |val diversity = -1.0*res.productDiversities.last
   |val interactionIntensity = res.interactionIntensity
   """.stripMargin
     ) set (
@@ -62,8 +62,7 @@ val model = ScalaTask("""
 
 val purpose = "OPTIMISATION"
 
-val resfilename = ((new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()))+"_"+purpose
-val indics_hook = CSVHook(workDirectory / "exploration" / (resfilename+".csv"),arrayOnRow=true)
+val resdir = ((new java.text.SimpleDateFormat("yyyyMMdd_HHmmss")).format(new java.util.Date()))+"_"+purpose
 
 
 val env = LocalEnvironment(10)
@@ -82,7 +81,7 @@ NSGA2Evolution(
         distanceDecay in (0.1,100.0)
       ),
       populationSize = 200,
-      objective = Seq(informalityError,unemploymentError),
+      objective = Seq(averageFitness,diversity),
       evaluation = (model on env),
       stochastic = Stochastic(seed = replication),
       termination = 10000,
