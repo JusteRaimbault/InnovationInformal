@@ -1,7 +1,7 @@
 
 setwd(paste0(Sys.getenv('CS_HOME'),'/QuantitativeEpistemology/InnovationInformal/Models/InnovationInformal/openmole'))
 
-library(dplyr)
+library(dplyr,warn.conflicts = F)
 library(readr)
 library(ggplot2)
 
@@ -10,6 +10,21 @@ source(paste0(Sys.getenv('CS_HOME'),'/Organisation/Models/Utils/R/plots.R'))
 params<-c("firmSizeScaling","crossOverProba","crossOverShare","mutationProba","mutationAmplitude",
           "currentProductShare","interactionProba","distanceDecay")
 indics<-c("bestFitness","averageFitness","fitnessDiff","fitnessEntropy","diversity","interactionIntensity")
+indicnames=list(bestFitness=expression(b),
+  averageFitness=expression(bar(f)),
+  fitnessDiff=expression(Delta*f),
+  fitnessEntropy=expression(Epsilon[f]),
+  diversity=expression(d),
+  interactionIntensity="interactionIntensity")
+paramnames <- list(firmSizeScaling=expression(alpha[S]),
+crossOverProba=expression(p[C]),
+crossOverShare=expression(s[C]),
+mutationProba=expression(p[M]),
+mutationAmplitude=expression(x[M]),
+currentProductShare=expression(s[P]),
+interactionProba=expression(p[E]),
+distanceDecay=expression(d[E])
+)
 
 # stochasticity
 resprefix = '20220313_214507_STOCHASTICITY'
@@ -65,14 +80,19 @@ resdir = paste0(Sys.getenv('CS_HOME'),'/QuantitativeEpistemology/InnovationInfor
 
 res <- read_csv(file=paste0('exploration/',resprefix,'.csv'))
 
+res$interactionProba=as.character(res$interactionProba)
+res$crossOverShare = paste0('s[C]*"="*',res$crossOverShare)
+res$firmSizeScaling = paste0('alpha[S]*"="*',res$firmSizeScaling)
+
 for(crossOverProba in unique(res$crossOverProba)){
   for (indic in indics){
-    g = ggplot(res[res$crossOverProba==crossOverProba,],
-               aes_string(x = "distanceDecay", y=indic, color = "interactionProba", group="interactionProba" ))
-    
-    g+geom_point(pch='.')+geom_smooth()+facet_grid(crossOverShare~firmSizeScaling,scales = 'free')+stdtheme
-    ggsave(filename = paste0(resdir,indic,'-distanceDecay_color-interactionProba_facet-crossOverShare-firmSizeScaling_crossOverProba',crossOverProba,'.png'),width=30,height=20,units='cm')
-    
+    ggsave(
+      ggplot(res[res$crossOverProba==crossOverProba,],
+             aes_string(x = "distanceDecay", y=indic, color = "interactionProba", group="interactionProba" ))+
+      geom_point(pch='.')+geom_smooth()+facet_grid(crossOverShare~firmSizeScaling,scales = 'free',labeller = label_parsed)+
+        scale_colour_discrete(name=expression(p[E]))+xlab(expression(d[E]))+ylab(indicnames[[indic]])+stdtheme
+      ,filename = paste0(resdir,indic,'-distanceDecay_color-interactionProba_facet-crossOverShare-firmSizeScaling_crossOverProba',crossOverProba,'.png'),width=30,height=20,units='cm'
+      )
   }
 }
 
@@ -104,8 +124,9 @@ res = res[res$diversity< -0.15,]
 
 for(param in params){
   g=ggplot(res,aes_string(x="diversity",y="averageFitness",color=param,size="samples"))
-  g+geom_point(alpha=0.6)+xlab("Diversity")+ylab("Utility")+scale_size_continuous(name="Samples")+stdtheme
-  ggsave(filename = paste0(resdir,"paretoDiversity-Fitness_color",param,'.png'),width=20,height=18,units='cm')
+  g+geom_point(alpha=0.6)+xlab("Diversity")+ylab("Utility")+
+    scale_size_continuous(name="Samples")+scale_colour_continuous(name=paramnames[[param]])+stdtheme
+  ggsave(filename = paste0(resdir,"paretoDiversity-Fitness_color",param,'.png'),width=25,height=20,units='cm')
 }
 
 
