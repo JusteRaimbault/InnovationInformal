@@ -116,6 +116,7 @@ res$mutationAmplitude = res$mutationAmplitude...7
 res$currentProductShare = res$currentProductShare...8
 res$interactionProba = res$interactionProba...9
 res$distanceDecay = res$distanceDecay...10
+res$crossOverProba = res$crossOverProba...4
 
 res$samples = res$`evolution$samples`
 
@@ -126,13 +127,17 @@ for(param in params){
   g=ggplot(res,aes_string(x="diversity",y="averageFitness",color=param,size="samples"))
   g+geom_point(alpha=0.6)+xlab("Diversity")+ylab("Utility")+
     scale_size_continuous(name="Samples")+scale_colour_continuous(name=paramnames[[param]])+stdtheme
-  ggsave(filename = paste0(resdir,"paretoDiversity-Fitness_color",param,'.png'),width=25,height=20,units='cm')
+  ggsave(filename = paste0(resdir,"paretoDiversity-Fitness_color",param,'.png'),width=23,height=20,units='cm')
 }
 
+ggplot(res,aes(x=interactionProba,y=diversity,size=samples,colour=distanceDecay))+geom_point(alpha=0.5)#+geom_smooth(span=0.5)
 
+ggplot(res,aes(x=interactionProba,y=averageFitness,size=samples,colour=distanceDecay))+geom_point(alpha=0.5)+geom_smooth()
 
+ggplot(res,aes(x=firmSizeScaling,y=averageFitness,size=samples,colour=distanceDecay))+geom_point(alpha=0.5)+geom_smooth()
 
-
-
-
+fres = res[res$diversity<(-0.4)&res$averageFitness<(-400),]
+summary(fres[,params])
+colMeans(fres[,params])
+apply(fres[,params],2,sd)
 
