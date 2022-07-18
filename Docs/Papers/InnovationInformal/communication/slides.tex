@@ -83,7 +83,7 @@ $^{4}$UMR CNRS 8504 G{\'e}ographie-cit{\'e}s
 
 
 \date{Artificial Life 2022\\
-Special session ALife and Society
+Special session ALife and Society\\
 July 19th 2022
 }
 
@@ -97,7 +97,7 @@ July 19th 2022
 \section{Introduction}
 
 
-\sframe{}{
+\sframe{Sustainable development goals}{
 
 %Innovation is a central process of evolution, from biological evolution to social, cultural \citep{mesoudi2018cumulative} and technological evolution \citep{sood2005technological}. Understanding the drivers of technological innovation is in that context crucial from a theoretical perspective for insights into evolutionary theories of social change and evolutionary economics among others, and from a practical perspective for sustainable planning and management of societies. Technological innovation may indeed be an essential aspect of transitions towards sustainability \citep{adams2016sustainability}, although it should not be their sole driver at the detriment of other dimensions of transitions such as social change.
 
@@ -107,6 +107,31 @@ July 19th 2022
 \includegraphics[width=0.38\linewidth]{figures/alifemainpage.jpg}
 \includegraphics[width=0.58\linewidth]{figures/sdgs_poster_936_en.png}
 
+\medskip
+
+\textit{Improvement of real lives? (DOLCE vita)}
+
+$\rightarrow$ challenges of sustainable developments goals
+
+}
+
+\sframe{SDGs and innovation}{
+
+$\rightarrow$ \textbf{Innovation} central to evolution and artificial life
+
+\smallskip
+
+$\rightarrow$ Central element at the intersection of several SDGs: 9 (innovation and infrastructure), 8 (economy), 11 (cities), 13 (climate)
+
+\smallskip
+
+$\rightarrow$ Emergence of trade-offs between SDGs in systems of cities: example of innovation and emissions \cite{raimbault2022trade}
+
+\bigskip
+
+\centering
+
+\includegraphics[height=0.5\textheight]{figures/jum_paper.png}
 
 }
 
@@ -118,8 +143,31 @@ July 19th 2022
 
 % From an evolutionary perspective, the concept of market niche has been used to explain technological change \citep{schot2007niches}. The firm in that context acts as the primary space where evolution of ideas occurs, and knowledge flows between firms can be understood in analogy with gene flows between isolated geographical areas in biological innovation. The transfer of concepts from biology to economic geography remains however valid only to a certain extent \citep{schamp2010notion}, and a precise definition of genomes, species, evolution and co-evolution in social systems is not straightforward \citep{raimbault2019modeling}. Regarding innovation, multiple scales from firms to cities can be for example considered \citep{raimbault2020model}. We choose here to focus on the microscopic scale of innovation ecosystems, more precisely how research and development employees of firms act as carriers of ideas leading to the emergence of breakthrough innovations \citep{song2016innovation}.
 
+Literature on \textbf{firm clusters} in economic geography and regional science:
 
+\medskip
 
+\begin{itemize}
+	\item Positive impact on innovation capabilities \cite{bittencourt2019cluster}
+	\item Intensity of social interaction and exchange of tacit knowledge \cite{gnyawali2013complementary} \cite{arikan2009interfirm}
+	\item Transfer of competences through employees \cite{almeida1999localization}
+\end{itemize}
+
+\bigskip
+
+Link between geographical niche and market niche?
+
+\medskip
+
+\begin{itemize}
+	\item Niches in technological evolution \cite{schot2007niches}
+	\item Evolutionary dynamics with specific processes (cf talk by R. Tucker yesterday) \cite{schamp2010notion}
+	\item Multiple geographical scales from firms to cities \cite{raimbault2020model}
+\end{itemize}
+
+\medskip
+
+$\rightarrow$ focus on firms and employees as carriers of knowledge \cite{song2016innovation}
 
 }
 
@@ -129,7 +177,17 @@ July 19th 2022
 
 %One privileged tool to study and simulate the emergence of innovations from this microscopic perspective are agent-based models (ABM). Various ABMs have been proposed for the diffusion of innovation \citep{kiesling2012agent}. \cite{sayama2015studying} use ABMs to simulate an ecology of ideas and study collective decision making and creativity. \cite{lopolito2013emerging} combine knowledge exchange, expectations of agents and learning as core mechanisms to simulate innovation niches. \cite{dosi2021patents} introduce an ABM to investigate the role of patenting on the innovativity of firms competing on a set of submarkets, including consumer demand. \cite{chen2006functional} focus on functional modularity of products and use a genetic programming formalism to evolve technologies. \cite{ma2005agent} describe an ABM of technological change which takes into account both intrinsic fitness selection pressure and environment selection pressure, the latest being determined by the interaction with customers. The role of space is studied by \cite{vermeulen2018role} in a multi-level approach combining interregional knowledge networks and knowledge diversity within regions. Diverse aspects of firm clusters have been studied by means of ABMs, such as firm competitiveness, local networks, and policy-making, among others \citep{fioretti2005agent}.
 
+Innovation emerging from the bottom-up, making agent-based models relevant:
 
+\medskip
+
+\begin{itemize}
+	\item spatial diffusion of innovations \cite{kiesling2012agent}
+	\item collective decision making and creativity \cite{sayama2015studying}
+	\item innovation niches \cite{lopolito2013emerging}, patenting \cite{dosi2021patents}, evolution of technologies \cite{chen2006functional}
+	\item role of space: multiple scales \cite{vermeulen2018role}
+	\item Properties and effects of firm clusters \cite{fioretti2005agent}
+\end{itemize}
 
 }
 
@@ -141,6 +199,15 @@ July 19th 2022
 
 %The rest of this paper is organised as follows: we first describe and formalise the agent-based model; we then describe results of various numerical experiments; and finally discuss the implications of these results and diverse potential model developments and applications.
 
+$\rightarrow$ At the crossroads of these two literature streams, role of informal knowledge flows at the microscopic level within firm clusters?
+
+\medskip
+
+$\rightarrow$ Practical implications for urban and regional planning, and the (non-)implementations of clusters
+
+\bigskip
+
+\textbf{Contribution:}
 
 
 
@@ -203,6 +270,16 @@ July 19th 2022
 %d(t) = \frac{1}{2 \cdot N_f \cdot (N_f - 1)} \sum_{k \neq l} \left(1 - \frac{p_k (t)\cdot p_l (t)}{\left||p_k (t)\right|| \cdot \left||p_l (t)\right||}\right)
 %\]
 %The more diverse phenotypes are, the higher this diversity index will be.
+
+\begin{enumerate}
+	\item Average fitness between firms $\bar{f} (t)$
+	\item Inequality between firms: entropy $\mathcal{E}_f$ of fitnesses
+	\item Diversity of products
+	\[
+	d(t) = \frac{1}{2 \cdot N_f \cdot (N_f - 1)} \sum_{k \neq l} \left(1 - \frac{p_k (t)\cdot p_l (t)}{\left||p_k (t)\right|| \cdot \left||p_l (t)\right||}\right)
+	\]
+\end{enumerate}
+
 
 
 }
